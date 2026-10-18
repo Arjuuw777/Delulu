@@ -1,0 +1,163 @@
+<!DOCTYPE html>
+<html lang="en">
+<head>
+<meta charset="UTF-8">
+<meta name="viewport" content="width=device-width, initial-scale=1.0">
+<meta name="theme-color" content="#ffedf3">
+<title>A Little Question 💗</title>
+<style>
+:root{--pink:#ff4f87;--deep:#8d2854;--cream:#fff7fa}
+*{box-sizing:border-box}
+body{margin:0;min-height:100vh;overflow:hidden;display:grid;place-items:center;font-family:ui-rounded,"Trebuchet MS",system-ui,sans-serif;color:var(--deep);background:radial-gradient(circle at 15% 15%,#fff 0 5%,transparent 28%),radial-gradient(circle at 85% 80%,#ffd4e2 0 4%,transparent 25%),linear-gradient(135deg,#fff4f8,#ffe0eb 50%,#ffd0e0)}
+.glow{position:fixed;width:360px;height:360px;border-radius:50%;filter:blur(55px);opacity:.42;pointer-events:none}.one{background:#ff9dbd;top:-140px;left:-120px}.two{background:#ffc5dc;bottom:-160px;right:-120px}
+.floaties{position:fixed;inset:0;overflow:hidden;pointer-events:none}
+.floaty{position:absolute;bottom:-50px;opacity:0;animation:rise linear infinite;user-select:none}
+@keyframes rise{0%{transform:translateY(0) rotate(0);opacity:0}12%{opacity:.62}85%{opacity:.5}100%{transform:translateY(-115vh) rotate(35deg);opacity:0}}
+.card{position:relative;z-index:1;width:min(92vw,510px);padding:clamp(26px,6vw,48px) 24px 32px;text-align:center;border:1px solid rgba(255,255,255,.9);border-radius:30px;background:rgba(255,255,255,.76);backdrop-filter:blur(15px);box-shadow:0 24px 70px rgba(153,42,88,.16),inset 0 1px 0 #fff}
+.heart{font-size:48px;line-height:1;display:inline-block;animation:beat 1.35s ease-in-out infinite;filter:drop-shadow(0 6px 12px #ff8eaf55)}
+@keyframes beat{0%,100%{transform:scale(1)}14%{transform:scale(1.12)}28%{transform:scale(1)}42%{transform:scale(1.08)}}
+.eyebrow{margin:16px 0 9px;font-size:11px;letter-spacing:3px;font-weight:800;color:#c05a81;text-transform:uppercase}
+h1{margin:0 auto 12px;font-size:clamp(29px,7vw,42px);line-height:1.12;letter-spacing:-1.5px;color:#8b234f}
+.subtitle{margin:0 auto 28px;max-width:340px;color:#a45a78;font-size:15px;line-height:1.65}
+.play-area{position:relative;min-height:125px;display:flex;align-items:center;justify-content:center;gap:14px;flex-wrap:wrap;isolation:isolate}
+button{border:0;border-radius:999px;padding:14px 28px;font-family:inherit;font-size:15px;font-weight:800;cursor:pointer;transition:transform .18s,box-shadow .18s,background .18s;touch-action:manipulation;white-space:nowrap}
+#yes{color:white;background:linear-gradient(135deg,#ff6b9d,#ef3677);box-shadow:0 9px 22px #f04d8550;position:relative;z-index:2}
+#yes:hover{transform:translateY(-3px) scale(1.04);box-shadow:0 13px 28px #f04d8560}
+#no{color:#a64d70;background:#fff;border:1px solid #f5c4d5;box-shadow:0 6px 15px #a23c5b0d;position:relative;z-index:3}
+#no.dodging{position:absolute}
+.message{min-height:42px;margin:18px 0 0;font-size:13px;line-height:1.5;color:#b25d7e}
+.footer{margin-top:22px;color:#ce8ba5;font-size:11px;letter-spacing:1px}
+.success{display:none;animation:pop .55s cubic-bezier(.2,.8,.2,1) both}
+@keyframes pop{from{opacity:0;transform:translateY(12px) scale(.94)}to{opacity:1;transform:translateY(0) scale(1)}}
+.success h1{font-size:clamp(32px,8vw,46px)}.success .big{font-size:58px;margin:8px 0 16px}
+.small-btn{margin-top:10px;background:#fff;color:#a64d70;border:1px solid #f5c4d5}
+.sparkle{position:fixed;z-index:5;pointer-events:none;animation:burst 1.2s ease-out forwards}
+@keyframes burst{to{transform:translate(var(--x),var(--y)) rotate(220deg) scale(.3);opacity:0}}
+@media(max-width:390px){.card{padding:28px 18px}.play-area{min-height:140px}button{padding:13px 22px}}
+@media(prefers-reduced-motion:reduce){*,*::before,*::after{animation-duration:.01ms!important;animation-iteration-count:1!important;transition:none!important}}
+</style>
+</head>
+<body>
+<div class="glow one"></div><div class="glow two"></div>
+<div class="floaties" id="floaties" aria-hidden="true"></div>
+<main class="card">
+  <section id="question">
+    <div class="heart">💗</div>
+    <p class="eyebrow">A tiny question for you</p>
+    <h1 id="questionTitle">Will you marry me?</h1>
+    <p class="subtitle" id="subtitle">I have a very important question… and maybe a tiny bit of courage. 🥹</p>
+    <div class="play-area" id="playArea">
+      <button id="yes" type="button">Yes! 💍</button>
+      <button id="no" type="button">No 🙈</button>
+    </div>
+    <p class="message" id="message" aria-live="polite">Choose honestly… my heart can handle it. 💌</p>
+  </section>
+  <section class="success" id="success" aria-live="polite">
+    <div class="big">🥹💖💍</div>
+    <p class="eyebrow">You just made my day</p>
+    <h1>Thank you sooo much! 💗</h1>
+    <p class="subtitle">This little heart is doing cartwheels right now. ✨</p>
+    <button class="small-btn" id="again" type="button">Replay the moment ↻</button>
+  </section>
+  <div class="footer">MADE WITH A LITTLE EXTRA LOVE ✦</div>
+</main>
+<script>
+const floaties=document.getElementById('floaties');
+const symbols=['♡','💗','♥','✨','🌸'];
+for(let i=0;i<24;i++){
+  const el=document.createElement('span');el.className='floaty';
+  el.textContent=symbols[Math.floor(Math.random()*symbols.length)];
+  el.style.left=Math.random()*100+'%';el.style.fontSize=(14+Math.random()*19)+'px';
+  el.style.animationDuration=(9+Math.random()*12)+'s';el.style.animationDelay=(-Math.random()*18)+'s';
+  floaties.appendChild(el);
+}
+const no=document.getElementById('no'),yes=document.getElementById('yes');
+const area=document.getElementById('playArea'),message=document.getElementById('message');
+const title=document.getElementById('questionTitle'),subtitle=document.getElementById('subtitle');
+let attempts=0,swap=false,declined=false;
+const jokes=[
+  'Oops, the No button got shy. 🙈',
+  'Wait—did that button just run away?! 🏃',
+  'The No button has entered its running era. 💨',
+  'Plot twist: the buttons are playing musical chairs! 🎵',
+  'Breaking news: tiny button refuses to sit still. 📰',
+  'Are you trying to catch it? 😂',
+  'This button has zero chill. 💗',
+  'The No button says it needs a little vacation. 🏝️',
+  'One more dramatic escape… ✨',
+  'Okay, this is officially a button chase. 😭'
+];
+const prompts=[
+  ['Will you marry me?','I have a very important question… and maybe a tiny bit of courage. 🥹'],
+  ['Wait… are you sure? 🥺','My imaginary wedding playlist is already ready. 🎶'],
+  ['Think about the cake! 🍰','Okay, the cake has absolutely no influence on your choice. Maybe.'],
+  ['A plot twist?! 💌','The buttons are being dramatic, not me. 😅'],
+  ['Last question… maybe? 🌸','Whatever you choose, you deserve to choose freely. 💗']
+];
+function moveNo(){
+  if(declined)return;
+  attempts++;
+  no.classList.add('dodging');
+  const areaRect=area.getBoundingClientRect();
+  const noW=no.offsetWidth||100,noH=no.offsetHeight||48;
+  const pad=5;
+  const maxX=Math.max(pad,areaRect.width-noW-pad);
+  const maxY=Math.max(pad,areaRect.height-noH-pad);
+  let x=pad+Math.random()*Math.max(1,maxX-pad);
+  let y=pad+Math.random()*Math.max(1,maxY-pad);
+  // Frequently switch the buttons' visual order for extra silly chaos.
+  if(attempts%4===0){
+    swap=!swap;
+    if(swap){area.insertBefore(no,yes);message.textContent='PLOT TWIST: the No button is now first! 😭';}
+    else{area.insertBefore(yes,no);message.textContent='The buttons have swapped back. For now. 🎭';}
+  }else{
+    message.textContent=jokes[(attempts-1)%jokes.length];
+  }
+  no.style.left=x+'px';no.style.top=y+'px';
+  no.style.transform=`rotate(${Math.random()*22-11}deg)`;
+  if(attempts%3===0){
+    const p=prompts[Math.min(Math.floor(attempts/3),prompts.length-1)];
+    title.textContent=p[0];subtitle.textContent=p[1];
+  }
+}
+no.addEventListener('pointerenter',e=>{if(e.pointerType==='mouse')moveNo()});
+no.addEventListener('pointerdown',e=>{if(e.pointerType!=='mouse'&&!declined){e.preventDefault();moveNo()}});
+no.addEventListener('click',()=>{
+  if(declined){message.textContent='That’s completely okay — no pressure, ever. 💗';return;}
+  moveNo();
+});
+no.addEventListener('keydown',e=>{
+  if((e.key==='Enter'||e.key===' ')&&!declined){e.preventDefault();moveNo();}
+});
+function resetButtons(){
+  no.classList.remove('dodging');no.style.left='';no.style.top='';no.style.transform='';
+  area.insertBefore(yes,no);attempts=0;swap=false;declined=false;
+  title.textContent='Will you marry me?';
+  subtitle.textContent='I have a very important question… and maybe a tiny bit of courage. 🥹';
+  message.textContent='Choose honestly… my heart can handle it. 💌';
+}
+yes.addEventListener('click',()=>{
+  document.getElementById('question').style.display='none';
+  document.getElementById('success').style.display='block';
+  burstHearts();
+});
+document.getElementById('again').addEventListener('click',()=>{
+  document.getElementById('success').style.display='none';
+  document.getElementById('question').style.display='block';
+  resetButtons();
+});
+function burstHearts(){
+  const icons=['💗','💖','💕','✨','💘','🌸'];
+  for(let i=0;i<42;i++){
+    const el=document.createElement('span');el.className='sparkle';
+    el.textContent=icons[Math.floor(Math.random()*icons.length)];
+    el.style.left=(45+Math.random()*10)+'vw';el.style.top=(42+Math.random()*12)+'vh';
+    el.style.setProperty('--x',(Math.random()*window.innerWidth-window.innerWidth/2)+'px');
+    el.style.setProperty('--y',(Math.random()*window.innerHeight-window.innerHeight/2)+'px');
+    el.style.fontSize=(16+Math.random()*22)+'px';document.body.appendChild(el);
+    setTimeout(()=>el.remove(),1300);
+  }
+}
+</script>
+</body>
+</html>
